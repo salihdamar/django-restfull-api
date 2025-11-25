@@ -1,31 +1,27 @@
-from django.http import JsonResponse
+from rest_framework.response import Response
 from django.shortcuts import render
 from .models import Product
+from .serializers import ProductListSerializer, ProductDetailSerializer
+from rest_framework.decorators import api_view
 
 
+@api_view(['GET'])
 def product_list(request):
-    products= Product.objects.all()
-    data= {'products': list(products.values())}
-    return JsonResponse(data)
+    try:
+         products= Product.objects.all()
+         serializer= ProductListSerializer(products, many=True)
+         return Response(serializer.data)       
+    except:  
+        return Response({'error':'An error occurred while fetching products'},status=500)
 
-
+@api_view(['GET'])
 def product_details(resquest, pk):
     try:
         product= Product.objects.get(pk=pk)
-        data={
-            'id': product.id,
-            'name': product.name,
-            'slug': product.slug,
-            #'category': product.category.id, #hata verdi düzenle burayı
-            'stock': product.stock,
-            'description': product.description,
-            'price': str(product.price),
-            'is_home': product.is_home,
-            'is_active': product.is_active,
-
-        }
-        return JsonResponse(data)
+        serializer= ProductDetailSerializer(product)
+        data= serializer.data
+        return Response(data)
     
     except Product.DoesNotExist:
-        return JsonResponse({'eror':'Productnot found'},status=404)
+        return Response({'error':'Product not found'},status=404)
        
