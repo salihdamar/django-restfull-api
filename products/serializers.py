@@ -1,17 +1,17 @@
 from rest_framework import serializers
+from .models import Product
+from categories.serializers import CategorySerializer
 
-class ProductListSerializer(serializers.Serializer):
-    id = serializers.IntegerField(read_only=True)
-    name = serializers.CharField(max_length=255)   
-    price = serializers.DecimalField(max_digits=10, decimal_places=2)
-    stock = serializers.IntegerField()
-  
+class ProductListSerializer(serializers.ModelSerializer):
+   
+    class Meta:
+        model= Product
+        fields= ['id','name','price','stock']# Essential fields for list view
 
-class ProductDetailSerializer(serializers.Serializer):
-    id = serializers.IntegerField(read_only=True)
-    name = serializers.CharField(max_length=255)
-    description = serializers.CharField(allow_blank=True, required=False)
-    price = serializers.DecimalField(max_digits=10, decimal_places=2)
-    stock = serializers.IntegerField()
-    created_at = serializers.DateTimeField(read_only=True)
-    updated_at = serializers.DateTimeField(read_only=True)
+
+class ProductDetailSerializer(serializers.ModelSerializer):
+    category= CategorySerializer()
+    class Meta:
+        model= Product
+        # fields= '__all__'
+        exclude= ['is_home','created_at','updated_at']  # Exclude less relevant fields for detail view
