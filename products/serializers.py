@@ -1,16 +1,18 @@
 from rest_framework import serializers
 from .models import Product
-from categories.serializers import CategorySerializer
+from categories.serializers import  CategoryDetailSerializer
 
-class ProductListSerializer(serializers.ModelSerializer):
-   
+class ProductSerializer(serializers.ModelSerializer):   
     class Meta:
         model= Product
         fields= ['id','name','price','stock']# Essential fields for list view
 
 
 class ProductDetailSerializer(serializers.ModelSerializer):
-    category= CategorySerializer()
+
+    # category= serializers.StringRelatedField(source='category.name')# Display only the category name
+    category= CategoryDetailSerializer(read_only=True) # Nested serializer for detailed category info 
+
     class Meta:
         model= Product
         # fields= '__all__'

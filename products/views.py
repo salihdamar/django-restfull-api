@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from django.shortcuts import render
 from .models import Product
-from .serializers import ProductListSerializer, ProductDetailSerializer
+from .serializers import ProductSerializer, ProductDetailSerializer
 from rest_framework.decorators import api_view
 
 
@@ -9,7 +9,7 @@ from rest_framework.decorators import api_view
 def product_list(request):
     try:
          products= Product.objects.all()
-         serializer= ProductListSerializer(products, many=True)
+         serializer= ProductSerializer(products, many=True)
          return Response(serializer.data)       
     except:  
         return Response({'error':'An error occurred while fetching products'},status=500)

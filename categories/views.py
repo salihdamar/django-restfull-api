@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .models import Category
-from .serializers import CategorySerializer
+from .serializers import CategorySerializer, CategoryDetailSerializer
 
 @api_view(['GET','POST'])
 def category_list(request):
@@ -20,4 +20,14 @@ def category_list(request):
         return Response(serializer.data)
     except Exception as e:
         return Response({'error': 'An error occurred while fetching categories'}, status=500)
+    
+
+@api_view(['GET'])
+def category_details(request, pk):
+    try:
+        category = Category.objects.get(pk=pk)
+        serializer = CategoryDetailSerializer(category)
+        return Response(serializer.data)
+    except Category.DoesNotExist:
+        return Response({'error': 'Category not found'}, status=404)
     
